@@ -18,13 +18,32 @@ static std::vector<std::string> defaultPrefixes() {
     return {"FFlag", "DFFlag", "SFFlag", "FInt", "DFInt", "FString", "FLog", "DFString"};
 }
 
+static void printUsage(std::ostream& output, const std::string& programName) {
+    output << "Usage: " << programName << " <path_to_RobloxPlayerBeta.exe> [cache_file]" << std::endl;
+    output << "  <path_to_RobloxPlayerBeta.exe>  Path to the Roblox executable to scan." << std::endl;
+    output << "  [cache_file]                    Optional cache file path." << std::endl;
+}
+
 int main(int argc, char* argv[]) {
+    const std::string programName = (argc > 0) ? argv[0] : "fastflag_scanner";
     if (argc < 2) {
-        std::cerr << "Usage: fastflag_scanner <path_to_RobloxPlayerBeta.exe> [cache_file]" << std::endl;
+        printUsage(std::cerr, programName);
         return 1;
     }
 
+    const std::string firstArg = argv[1];
+    if (firstArg == "-h" || firstArg == "--help") {
+        printUsage(std::cout, programName);
+        return 0;
+    }
+
     const std::filesystem::path executablePath = argv[1];
+    if (!std::filesystem::exists(executablePath)) {
+        std::cerr << "Error: path not found: " << executablePath << std::endl;
+        printUsage(std::cerr, programName);
+        return 1;
+    }
+
     const std::filesystem::path cachePath = (argc >= 3) ? argv[2] : std::filesystem::path("fastflag_cache.txt");
 
     BinaryAnalyzer analyzer(executablePath);
