@@ -17,6 +17,7 @@ add_executable(fastflag_scanner
 target_include_directories(fastflag_scanner PRIVATE src)
 
 if(MSVC)
+    set_property(TARGET fastflag_scanner PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     target_compile_options(fastflag_scanner PRIVATE /W4 /permissive-)
 else()
     target_compile_options(fastflag_scanner PRIVATE -Wall -Wextra -Wpedantic)
